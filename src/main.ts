@@ -1,44 +1,13 @@
+import { SquareRenderer } from "./shapes-renderers/square-renderer";
 import "./style.css";
-
-abstract class Shape {
-  constructor(protected positionX: number, protected positionY: number) {}
-
-  abstract draw(ctx: CanvasRenderingContext2D): void;
-  abstract in(x: number, y: number): boolean;
-}
-
-class Square extends Shape {
-  constructor(
-    positionX: number,
-    positionY: number,
-    private a: number,
-    public isAlive: boolean = false
-  ) {
-    super(positionX, positionY);
-  }
-
-  draw(ctx: CanvasRenderingContext2D) {
-    if (this.isAlive) {
-      ctx.fillStyle = "red";
-    }
-    ctx.fillRect(this.positionX, this.positionY, this.a, this.a);
-    ctx.fillStyle = "black";
-  }
-
-  in(x: number, y: number) {
-    return (
-      x > this.positionX &&
-      y > this.positionY &&
-      x < this.positionX + this.a &&
-      y < this.positionY + this.a
-    );
-  }
-}
 
 let zoom = 1;
 const ZOOM_SENSITIVITY = 0.005;
 
-const cells = [new Square(200, 200, 20), new Square(2000, 200, 20)];
+const cells = [
+  new SquareRenderer(200, 200, 20),
+  new SquareRenderer(2000, 200, 20),
+];
 
 function initializeCanvas(canvasId: string) {
   const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
