@@ -4,8 +4,8 @@ import "./style.css";
 let zoom = 1;
 const ZOOM_SENSITIVITY = 0.005;
 
-const RED = { r: 255, g: 0, b: 0 };
-const GREEN = { r: 0, g: 255, b: 0 };
+const RED = { r: 255, g: 0, b: 0, a: 80 };
+const GREEN = { r: 0, g: 255, b: 0, a: 40 };
 
 const cells = [
   new SquareRenderer(200, 200, RED, 20),
