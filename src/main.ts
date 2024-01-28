@@ -4,6 +4,13 @@ import "./style.css";
 let zoom = 1;
 const ZOOM_SENSITIVITY = 0.005;
 
+let mouseMove = false;
+let mouseMoveStartX = 0;
+let mouseMoveStartY = 0;
+
+let translateX = 0;
+let translateY = 0;
+
 const RED = { r: 255, g: 0, b: 0, a: 80 };
 const GREEN = { r: 0, g: 255, b: 0, a: 40 };
 
@@ -16,6 +23,9 @@ function initializeCanvas(canvasId: string) {
   const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
   canvas.addEventListener("wheel", onScroll);
   canvas.addEventListener("click", onClick);
+  canvas.addEventListener("mousedown", onMouseDown);
+  canvas.addEventListener("mouseup", onMouseUp);
+  canvas.addEventListener("mousemove", onMouseMove);
 
   const context = canvas.getContext("2d");
   if (!context) throw new Error("Couldn't initialize context.");
@@ -23,6 +33,26 @@ function initializeCanvas(canvasId: string) {
 
   function onScroll(event: Event) {
     zoom += (<WheelEvent>event).deltaY * ZOOM_SENSITIVITY;
+  }
+
+  function onMouseDown(event: Event) {
+    mouseMoveStartX = (<MouseEvent>event).offsetX / zoom;
+    mouseMoveStartY = (<MouseEvent>event).offsetY / zoom;
+    mouseMove = true;
+  }
+
+  function onMouseMove(event: Event) {
+    if (!mouseMove) return;
+    const x = (<MouseEvent>event).offsetX / zoom;
+    const y = (<MouseEvent>event).offsetY / zoom;
+    translateX -= mouseMoveStartX - x;
+    translateY -= mouseMoveStartY - y;
+    mouseMoveStartX = x;
+    mouseMoveStartY = y;
+  }
+
+  function onMouseUp(event: Event) {
+    mouseMove = false;
   }
 
   function onClick(event: Event) {
@@ -44,6 +74,8 @@ function initializeCanvas(canvasId: string) {
 
 function animateCanvas(context: CanvasRenderingContext2D) {
   resize();
+  context.translate(translateX, translateY);
+
   context.scale(zoom, zoom);
   context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
