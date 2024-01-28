@@ -1,20 +1,19 @@
-import { ShapeRenderer as ShapeRenderer } from "./shape-renderer";
+import { RGB, ShapeRenderer as ShapeRenderer } from "./shape-renderer";
 
 export class SquareRenderer extends ShapeRenderer {
+  isAlive: boolean = false;
   constructor(
     positionX: number,
     positionY: number,
-    private a: number,
-    public isAlive: boolean = false
+    color: RGB,
+    private a: number
   ) {
-    super(positionX, positionY);
+    super(positionX, positionY, color);
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  drawInternal(ctx: CanvasRenderingContext2D) {
     ctx.save();
-    if (this.isAlive) {
-      ctx.fillStyle = "red";
-    }
+    ctx.fillStyle = `rgb(${this.color.r},${this.color.g}, ${this.color.b})`;
     ctx.fillRect(this.positionX, this.positionY, this.a, this.a);
     ctx.restore();
   }

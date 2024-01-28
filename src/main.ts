@@ -4,9 +4,12 @@ import "./style.css";
 let zoom = 1;
 const ZOOM_SENSITIVITY = 0.005;
 
+const RED = { r: 255, g: 0, b: 0 };
+const GREEN = { r: 0, g: 255, b: 0 };
+
 const cells = [
-  new SquareRenderer(200, 200, 20),
-  new SquareRenderer(2000, 200, 20),
+  new SquareRenderer(200, 200, RED, 20),
+  new SquareRenderer(2000, 200, RED, 20),
 ];
 
 function initializeCanvas(canvasId: string) {
@@ -27,7 +30,15 @@ function initializeCanvas(canvasId: string) {
     const y = (<MouseEvent>event).offsetY / zoom;
 
     const target = cells.find((c) => c.in(x, y));
-    if (target) target.isAlive = !target.isAlive;
+    if (target) {
+      if (target.isAlive) {
+        target.isAlive = false;
+        target.changeColorTo(RED, 20);
+      } else {
+        target.isAlive = true;
+        target.changeColorTo(GREEN, 20);
+      }
+    }
   }
 }
 
