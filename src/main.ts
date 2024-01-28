@@ -56,8 +56,8 @@ function initializeCanvas(canvasId: string) {
   }
 
   function onClick(event: Event) {
-    const x = (<MouseEvent>event).offsetX / zoom;
-    const y = (<MouseEvent>event).offsetY / zoom;
+    const x = ((<MouseEvent>event).offsetX - translateX) / zoom;
+    const y = ((<MouseEvent>event).offsetY - translateY) / zoom;
 
     const target = cells.find((c) => c.in(x, y));
     if (target) {
@@ -74,8 +74,8 @@ function initializeCanvas(canvasId: string) {
 
 function animateCanvas(context: CanvasRenderingContext2D) {
   resize();
-  context.translate(translateX, translateY);
 
+  context.translate(translateX, translateY);
   context.scale(zoom, zoom);
   context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
