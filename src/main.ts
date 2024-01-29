@@ -2,14 +2,22 @@ import { Canvas, Scene } from "./canvas";
 import { SquareRenderer } from "./shapes-renderers/square-renderer";
 import "./style.css";
 
-const RED = { r: 245, g: 222, b:179, a: 80 };
+const RED = { r: 245, g: 222, b: 179, a: 80 };
 const GREEN = { r: 0, g: 255, b: 0, a: 40 };
 
-const cells = generateBoard(100, 100, 20, 5).flat();
+const size = 20;
+const gap = 5;
+const cells = generateBoard(100, 100, size, gap);
+const flattenCells = cells.flat();
 
 const scene: Scene = {
   clickHandler(x, y) {
-    const target = cells.find((c) => c.in(x, y));
+    const xCell = Math.floor(x / (size + gap));
+    const yCell = Math.floor(y / (size + gap));
+    const target = cells[yCell][xCell];
+
+    if (!target.in(x, y)) return;
+
     if (target) {
       if (target.isAlive) {
         target.isAlive = false;
@@ -22,7 +30,7 @@ const scene: Scene = {
   },
 
   sceneRenderer(context) {
-    for (const shape of cells) {
+    for (const shape of flattenCells) {
       shape.draw(context);
     }
   },
