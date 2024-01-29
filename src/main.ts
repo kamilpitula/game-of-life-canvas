@@ -5,10 +5,7 @@ import "./style.css";
 const RED = { r: 255, g: 0, b: 0, a: 80 };
 const GREEN = { r: 0, g: 255, b: 0, a: 40 };
 
-const cells = [
-  new SquareRenderer(200, 200, RED, 20),
-  new SquareRenderer(2000, 200, RED, 20),
-];
+const cells = generateBoard(100, 100, 20, 5).flat();
 
 const scene: Scene = {
   clickHandler(x, y) {
@@ -33,3 +30,19 @@ const scene: Scene = {
 const canvas = new Canvas("canvas", scene);
 
 canvas.animateScene();
+
+function generateBoard(
+  height: number,
+  width: number,
+  size: number,
+  gap: number
+) {
+  return Array.from(Array(height).keys()).map((i) => generateRow(i));
+
+  function generateRow(i: number): SquareRenderer[] {
+    return Array.from(Array(width).keys()).map(
+      (j) =>
+        new SquareRenderer(size * j + j * gap, size * i + i * gap, RED, size)
+    );
+  }
+}
