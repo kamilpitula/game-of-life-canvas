@@ -1,20 +1,16 @@
-import { SquareRenderer } from "./shapes-renderers/square-renderer";
-
 const ZOOM_SENSITIVITY = 0.005;
 const ZOOM_MAX = 3;
 const ZOOM_MIN = 0.5;
 
-const RED = { r: 255, g: 0, b: 0, a: 80 };
-const GREEN = { r: 0, g: 255, b: 0, a: 40 };
-
-const cells = [
-  new SquareRenderer(200, 200, RED, 20),
-  new SquareRenderer(2000, 200, RED, 20),
-];
+export type Scene = {
+  clickHandler: (x: number, y: number) => void;
+  sceneRenderer: (context: CanvasRenderingContext2D) => void;
+};
 
 export class Canvas {
   canvasElement: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
+  scene: Scene;
 
   zoom: number = 1;
 
@@ -25,7 +21,7 @@ export class Canvas {
   translateX: number = 0;
   translateY: number = 0;
 
-  constructor(id: string) {
+  constructor(id: string, scene: Scene) {
     const el = <HTMLCanvasElement>document.getElementById(id);
     if (!el) throw new Error(`Couldn't find canvas element with id: ${id}`);
 
@@ -34,6 +30,7 @@ export class Canvas {
 
     this.canvasElement = el;
     this.context = context;
+    this.scene = scene;
 
     this.initializeCanvas();
   }
@@ -48,21 +45,21 @@ export class Canvas {
 
     function onScroll(this: Canvas, event: Event) {
       const targetZoom =
-        this.zoom + (<WheelEvent>event).deltaY * ZOOM_SENSITIVITY;
+        this.zoom - (<WheelEvent>event).deltaY * ZOOM_SENSITIVITY;
       if (targetZoom >= ZOOM_MAX || targetZoom <= ZOOM_MIN) return;
       this.zoom = targetZoom;
     }
 
     function onMouseDown(this: Canvas, event: Event) {
-      this.mouseMoveStartX = (<MouseEvent>event).offsetX / this.zoom;
-      this.mouseMoveStartY = (<MouseEvent>event).offsetY / this.zoom;
+      this.mouseMoveStartX = (<MouseEvent>event).offsetX;
+      this.mouseMoveStartY = (<MouseEvent>event).offsetY;
       this.mouseMove = true;
     }
 
     function onMouseMove(this: Canvas, event: Event) {
       if (!this.mouseMove) return;
-      const x = (<MouseEvent>event).offsetX / this.zoom;
-      const y = (<MouseEvent>event).offsetY / this.zoom;
+      const x = (<MouseEvent>event).offsetX;
+      const y = (<MouseEvent>event).offsetY;
       this.translateX -= this.mouseMoveStartX - x;
       this.translateY -= this.mouseMoveStartY - y;
       this.mouseMoveStartX = x;
@@ -77,20 +74,11 @@ export class Canvas {
       const x = ((<MouseEvent>event).offsetX - this.translateX) / this.zoom;
       const y = ((<MouseEvent>event).offsetY - this.translateY) / this.zoom;
 
-      const target = cells.find((c) => c.in(x, y));
-      if (target) {
-        if (target.isAlive) {
-          target.isAlive = false;
-          target.changeColorTo(RED, 20);
-        } else {
-          target.isAlive = true;
-          target.changeColorTo(GREEN, 20);
-        }
-      }
+      this.scene.clickHandler(x, y);
     }
   }
 
-  animateCanvas() {
+  animateScene() {
     resize.call(this);
 
     this.context.translate(this.translateX, this.translateY);
@@ -102,11 +90,9 @@ export class Canvas {
       this.context.canvas.height
     );
 
-    for (const cell of cells) {
-      cell.draw(this.context);
-    }
+    this.scene.sceneRenderer(this.context);
 
-    window.requestAnimationFrame(() => this.animateCanvas());
+    window.requestAnimationFrame(() => this.animateScene());
 
     function resize(this: Canvas) {
       const canvas = this.context.canvas;
