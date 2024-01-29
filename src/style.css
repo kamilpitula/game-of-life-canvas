@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    @apply box-border;
+  }
   html,
   body {
     @apply h-screen;
-  }
-  * {
-    @apply box-border;
   }
 }

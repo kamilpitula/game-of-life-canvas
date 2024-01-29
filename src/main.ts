@@ -3,6 +3,8 @@ import "./style.css";
 
 let zoom = 1;
 const ZOOM_SENSITIVITY = 0.005;
+const ZOOM_MAX = 3;
+const ZOOM_MIN = 0.5;
 
 let mouseMove = false;
 let mouseMoveStartX = 0;
@@ -32,7 +34,9 @@ function initializeCanvas(canvasId: string) {
   return context;
 
   function onScroll(event: Event) {
-    zoom += (<WheelEvent>event).deltaY * ZOOM_SENSITIVITY;
+    const targetZoom = zoom + (<WheelEvent>event).deltaY * ZOOM_SENSITIVITY;
+    if (targetZoom >= ZOOM_MAX || targetZoom <= ZOOM_MIN) return;
+    zoom = targetZoom;
   }
 
   function onMouseDown(event: Event) {
