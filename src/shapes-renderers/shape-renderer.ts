@@ -4,7 +4,6 @@ export abstract class ShapeRenderer {
   private transitionTime: number;
   private colorDiff: RGBA;
   public dirty: boolean;
-  protected abstract _pixels: { x: number; y: number }[];
 
   constructor(
     public positionX: number,
@@ -17,10 +16,6 @@ export abstract class ShapeRenderer {
     this.dirty = true;
   }
   abstract in(x: number, y: number): boolean;
-
-  get pixels() {
-    return this._pixels;
-  }
 
   get containingArea() {
     return this._containingArea;
