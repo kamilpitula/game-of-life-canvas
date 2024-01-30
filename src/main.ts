@@ -34,10 +34,10 @@ const scene: Scene = {
     if (target) {
       if (target.isAlive) {
         target.isAlive = false;
-        target.changeColorTo(RED, 20);
+        target.changeColorTo(RED, 10);
       } else {
         target.isAlive = true;
-        target.changeColorTo(GREEN, 20);
+        target.changeColorTo(GREEN, 10);
       }
     }
   },
@@ -48,27 +48,29 @@ const scene: Scene = {
       context.drawImage(tempContext.canvas, 0, 0);
       return;
     }
-    const imageData = tempContext.getImageData(0, 0, widthPx, heightPx);
-    const lineLength = imageData.width * 4;
 
     setPixels();
-    tempContext.putImageData(imageData, 0, 0);
     context.drawImage(tempContext.canvas, 0, 0);
 
     function setPixels() {
       for (const shape of dirtyCells) {
         shape.animateTransition();
-        for (const pixel of shape.pixels) {
-          const startingPosition = pixel.x * 4 + pixel.y * lineLength;
-          imageData.data[startingPosition] = shape.color.r;
-          imageData.data[startingPosition + 1] = shape.color.g;
-          imageData.data[startingPosition + 2] = shape.color.b;
-          imageData.data[startingPosition + 3] = shape.color.a;
+        const { x, y, w, h } = shape.containingArea;
+        const { r, g, b, a } = shape.color;
+        const imageDataForCell = tempContext.getImageData(x, y, w, h);
+        const data = imageDataForCell.data;
+        for (let i = 0; i < data.length; i += 4) {
+          imageDataForCell.data[i] = r;
+          imageDataForCell.data[i + 1] = g;
+          imageDataForCell.data[i + 2] = b;
+          imageDataForCell.data[i + 3] = a;
         }
+        tempContext.putImageData(imageDataForCell, x, y);
       }
     }
   },
 };
+
 const canvas = new Canvas("canvas", scene);
 
 canvas.animateScene();

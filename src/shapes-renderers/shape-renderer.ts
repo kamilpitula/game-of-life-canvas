@@ -7,9 +7,10 @@ export abstract class ShapeRenderer {
   protected abstract _pixels: { x: number; y: number }[];
 
   constructor(
-    protected positionX: number,
-    protected positionY: number,
-    public color: RGBA
+    public positionX: number,
+    public positionY: number,
+    public color: RGBA,
+    private _containingArea: { x: number; y: number; w: number; h: number }
   ) {
     this.transitionTime = 0;
     this.colorDiff = { r: 0, g: 0, b: 0, a: 0 };
@@ -19,6 +20,10 @@ export abstract class ShapeRenderer {
 
   get pixels() {
     return this._pixels;
+  }
+
+  get containingArea() {
+    return this._containingArea;
   }
 
   animateTransition() {

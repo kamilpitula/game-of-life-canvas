@@ -10,7 +10,12 @@ export class SquareRenderer extends ShapeRenderer {
     color: RGBA,
     private a: number
   ) {
-    super(positionX, positionY, color);
+    super(positionX, positionY, color, {
+      x: positionX,
+      y: positionY,
+      w: a,
+      h: a,
+    });
     this._pixels = this.generatePixels();
   }
 
