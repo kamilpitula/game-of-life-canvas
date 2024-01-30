@@ -16,6 +16,11 @@ const tempContext = document
   .createElement("canvas")
   .getContext("2d", { willReadFrequently: true })!;
 
+const widthPx = width * size + (width - 1) * gap;
+const heightPx = height * size + (height - 1) * gap;
+tempContext.canvas.width = widthPx;
+tempContext.canvas.height = heightPx;
+
 const scene: Scene = {
   clickHandler(x, y) {
     const xCell = Math.floor(x / (size + gap));
@@ -38,11 +43,12 @@ const scene: Scene = {
   },
 
   sceneRenderer(context) {
-    const widthPx = width * size + (width - 1) * gap;
-    const heightPx = height * size + (height - 1) * gap;
-    tempContext.canvas.width = widthPx;
-    tempContext.canvas.height = heightPx;
-    const imageData = tempContext.createImageData(widthPx, heightPx);
+    const dirtyCells = flattenCells.filter((c) => c.dirty);
+    if (dirtyCells.length === 0) {
+      context.drawImage(tempContext.canvas, 0, 0);
+      return;
+    }
+    const imageData = tempContext.getImageData(0, 0, widthPx, heightPx);
     const lineLength = imageData.width * 4;
 
     setPixels();
@@ -50,7 +56,7 @@ const scene: Scene = {
     context.drawImage(tempContext.canvas, 0, 0);
 
     function setPixels() {
-      for (const shape of flattenCells) {
+      for (const shape of dirtyCells) {
         shape.animateTransition();
         for (const pixel of shape.pixels) {
           const startingPosition = pixel.x * 4 + pixel.y * lineLength;
