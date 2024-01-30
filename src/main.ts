@@ -7,34 +7,70 @@ const GREEN = { r: 0, g: 255, b: 0, a: 40 };
 
 const size = 20;
 const gap = 5;
-const cells = generateBoard(100, 100, size, gap);
+const height = 100;
+const width = 100;
+const cells = generateBoard(height, width, size, gap);
 const flattenCells = cells.flat();
+
+const tempContext = document
+  .createElement("canvas")
+  .getContext("2d", { willReadFrequently: true })!;
+
+const widthPx = width * size + (width - 1) * gap;
+const heightPx = height * size + (height - 1) * gap;
+tempContext.canvas.width = widthPx;
+tempContext.canvas.height = heightPx;
 
 const scene: Scene = {
   clickHandler(x, y) {
     const xCell = Math.floor(x / (size + gap));
     const yCell = Math.floor(y / (size + gap));
-    const target = cells[yCell][xCell];
+    const row = cells[yCell];
+    if (!row) return;
 
+    const target = cells[yCell][xCell];
     if (!target.in(x, y)) return;
 
     if (target) {
       if (target.isAlive) {
         target.isAlive = false;
-        target.changeColorTo(RED, 20);
+        target.changeColorTo(RED, 10);
       } else {
         target.isAlive = true;
-        target.changeColorTo(GREEN, 20);
+        target.changeColorTo(GREEN, 10);
       }
     }
   },
 
   sceneRenderer(context) {
-    for (const shape of flattenCells) {
-      shape.draw(context);
+    const dirtyCells = flattenCells.filter((c) => c.dirty);
+    if (dirtyCells.length === 0) {
+      context.drawImage(tempContext.canvas, 0, 0);
+      return;
+    }
+
+    setPixels();
+    context.drawImage(tempContext.canvas, 0, 0);
+
+    function setPixels() {
+      for (const shape of dirtyCells) {
+        shape.animateTransition();
+        const { x, y, w, h } = shape.containingArea;
+        const { r, g, b, a } = shape.color;
+        const imageDataForCell = tempContext.getImageData(x, y, w, h);
+        const data = imageDataForCell.data;
+        for (let i = 0; i < data.length; i += 4) {
+          imageDataForCell.data[i] = r;
+          imageDataForCell.data[i + 1] = g;
+          imageDataForCell.data[i + 2] = b;
+          imageDataForCell.data[i + 3] = a;
+        }
+        tempContext.putImageData(imageDataForCell, x, y);
+      }
     }
   },
 };
+
 const canvas = new Canvas("canvas", scene);
 
 canvas.animateScene();

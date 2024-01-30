@@ -38,7 +38,7 @@ export class Canvas {
   private initializeCanvas() {
     const canvas = this.canvasElement;
     canvas.addEventListener("wheel", onScroll.bind(this));
-    canvas.addEventListener("click", onClick.bind(this));
+    canvas.addEventListener("click",onClick.bind(this));
     canvas.addEventListener("mousedown", onMouseDown.bind(this));
     canvas.addEventListener("mouseup", onMouseUp.bind(this));
     canvas.addEventListener("mousemove", onMouseMove.bind(this));
@@ -71,6 +71,7 @@ export class Canvas {
     }
 
     function onClick(this: Canvas, event: Event) {
+      if (this.mouseMove) return;
       const x = ((<MouseEvent>event).offsetX - this.translateX) / this.zoom;
       const y = ((<MouseEvent>event).offsetY - this.translateY) / this.zoom;
 
