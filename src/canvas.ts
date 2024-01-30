@@ -5,11 +5,15 @@ const ZOOM_MIN = 0.5;
 export type Scene = {
   clickHandler: (x: number, y: number) => void;
   sceneRenderer: (context: CanvasRenderingContext2D) => void;
+  width: number;
+  height: number;
 };
 
 export class Canvas {
   canvasElement: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
+  offScreenCanvas: HTMLCanvasElement;
+  offScreenContext: CanvasRenderingContext2D;
   scene: Scene;
 
   zoom: number = 1;
@@ -28,6 +32,13 @@ export class Canvas {
     const context = el.getContext("2d");
     if (!context) throw new Error("Couldn't initialize context.");
 
+    this.offScreenCanvas = document.createElement("canvas");
+    this.offScreenContext = this.offScreenCanvas.getContext("2d", {
+      willReadFrequently: true,
+    })!;
+    this.offScreenCanvas.width = scene.width;
+    this.offScreenCanvas.height = scene.height;
+
     this.canvasElement = el;
     this.context = context;
     this.scene = scene;
@@ -37,11 +48,13 @@ export class Canvas {
 
   private initializeCanvas() {
     const canvas = this.canvasElement;
+    this.resize();
     canvas.addEventListener("wheel", onScroll.bind(this));
-    canvas.addEventListener("click",onClick.bind(this));
+    canvas.addEventListener("click", onClick.bind(this));
     canvas.addEventListener("mousedown", onMouseDown.bind(this));
     canvas.addEventListener("mouseup", onMouseUp.bind(this));
     canvas.addEventListener("mousemove", onMouseMove.bind(this));
+    window.addEventListener("resize", this.resize.bind(this));
 
     function onScroll(this: Canvas, event: Event) {
       const targetZoom =
@@ -79,27 +92,31 @@ export class Canvas {
     }
   }
 
-  animateScene() {
-    resize.call(this);
+  private resize(this: Canvas) {
+    const canvas = this.context.canvas;
+    const parent = canvas.parentElement;
+    canvas.width = parent!.clientWidth;
+    canvas.height = parent!.clientHeight;
+  }
 
-    this.context.translate(this.translateX, this.translateY);
-    this.context.scale(this.zoom, this.zoom);
+  animateScene() {
     this.context.clearRect(
       0,
       0,
-      this.context.canvas.width,
-      this.context.canvas.height
+      this.offScreenCanvas.width,
+      this.offScreenCanvas.height
     );
-
-    this.scene.sceneRenderer(this.context);
+    this.context.setTransform(
+      this.zoom,
+      0,
+      0,
+      this.zoom,
+      this.translateX,
+      this.translateY
+    );
+    this.scene.sceneRenderer(this.offScreenContext);
+    this.context.drawImage(this.offScreenCanvas, 0, 0);
 
     window.requestAnimationFrame(() => this.animateScene());
-
-    function resize(this: Canvas) {
-      const canvas = this.context.canvas;
-      const parent = canvas.parentElement;
-      canvas.width = parent!.clientWidth;
-      canvas.height = parent!.clientHeight;
-    }
   }
 }
