@@ -3,20 +3,23 @@ export type RGBA = { r: number; g: number; b: number; a: number };
 export abstract class ShapeRenderer {
   private transitionTime: number;
   private colorDiff: RGBA;
+  protected abstract _pixels: { x: number; y: number }[];
 
   constructor(
     protected positionX: number,
     protected positionY: number,
-    protected color: RGBA
+    public color: RGBA
   ) {
     this.transitionTime = 0;
     this.colorDiff = { r: 0, g: 0, b: 0, a: 0 };
   }
   abstract in(x: number, y: number): boolean;
-  
-  protected abstract drawInternal(ctx: CanvasRenderingContext2D): void;
 
-  protected animateTransition() {
+  get pixels() {
+    return this._pixels;
+  }
+
+  animateTransition() {
     if (this.transitionTime <= 0) return;
 
     this.color = {
@@ -37,13 +40,5 @@ export abstract class ShapeRenderer {
     const bDiff = (targetB - b) / transitionTime;
     const aDiff = (targetA - a) / transitionTime;
     this.colorDiff = { r: rDiff, g: gDiff, b: bDiff, a: aDiff };
-  }
-
-  draw(ctx: CanvasRenderingContext2D): void {
-    this.animateTransition();
-    ctx.save();
-    ctx.fillStyle = `rgb(${this.color.r} ${this.color.g} ${this.color.b} / ${this.color.a}%)`;
-    this.drawInternal(ctx);
-    ctx.restore();
   }
 }
