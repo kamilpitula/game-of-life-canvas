@@ -17,6 +17,8 @@ export class Canvas {
   scene: Scene;
 
   zoom: number = 1;
+  offsetToCenterX: number = 0;
+  offsetToCenterY: number = 0;
 
   mouseMove: boolean = false;
   mouseMoveStartX: number = 0;
@@ -41,9 +43,7 @@ export class Canvas {
 
     this.canvasElement = el;
     this.context = context;
-    // this.context.imageSmoothingEnabled = false;
     this.context.imageSmoothingQuality = "high";
-    // this.offScreenContext.imageSmoothingEnabled = false;
     this.scene = scene;
 
     this.initializeCanvas();
@@ -88,8 +88,12 @@ export class Canvas {
 
     function onClick(this: Canvas, event: Event) {
       if (this.mouseMove) return;
-      const x = ((<MouseEvent>event).offsetX - this.translateX) / this.zoom;
-      const y = ((<MouseEvent>event).offsetY - this.translateY) / this.zoom;
+      const x =
+        ((<MouseEvent>event).offsetX - this.translateX - this.offsetToCenterX) /
+        this.zoom;
+      const y =
+        ((<MouseEvent>event).offsetY - this.translateY - this.offsetToCenterY) /
+        this.zoom;
 
       this.scene.clickHandler(x, y);
     }
@@ -100,6 +104,10 @@ export class Canvas {
     const parent = canvas.parentElement;
     canvas.width = parent!.clientWidth;
     canvas.height = parent!.clientHeight;
+    this.offsetToCenterX =
+      (this.canvasElement.width - this.offScreenCanvas.width) / 2;
+    this.offsetToCenterY =
+      (this.canvasElement.height - this.offScreenCanvas.height) / 2;
   }
 
   animateScene() {
@@ -109,13 +117,18 @@ export class Canvas {
       this.offScreenCanvas.width,
       this.offScreenCanvas.height
     );
+    this.context.translate(
+      this.offScreenCanvas.width / 2,
+      this.offScreenCanvas.height / 2
+    );
+
     this.context.setTransform(
       this.zoom,
       0,
       0,
       this.zoom,
-      this.translateX,
-      this.translateY
+      this.translateX + this.offsetToCenterX,
+      this.translateY + this.offsetToCenterY
     );
     this.scene.sceneRenderer(this.offScreenContext);
     this.context.drawImage(this.offScreenCanvas, 0, 0);
