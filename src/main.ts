@@ -9,8 +9,7 @@ const size = 20;
 const gap = 5;
 const height = 100;
 const width = 100;
-const cells = generateBoard(height, width, size, gap);
-const flattenCells = cells.flat();
+const flattenCells = generateBoard(height, width, size, gap);
 
 const widthPx = width * size + (width - 1) * gap;
 const heightPx = height * size + (height - 1) * gap;
@@ -21,10 +20,9 @@ const scene: Scene = {
   clickHandler(x, y) {
     const xCell = Math.floor(x / (size + gap));
     const yCell = Math.floor(y / (size + gap));
-    const row = cells[yCell];
-    if (!row) return;
+    const target = flattenCells[xCell + width * yCell];
+    if (!target) return;
 
-    const target = cells[yCell][xCell];
     if (!target.in(x, y)) return;
 
     if (target) {
@@ -73,12 +71,16 @@ function generateBoard(
   size: number,
   gap: number
 ) {
-  return Array.from(Array(height).keys()).map((i) => generateRow(i));
-
-  function generateRow(i: number): SquareRenderer[] {
-    return Array.from(Array(width).keys()).map(
-      (j) =>
-        new SquareRenderer(size * j + j * gap, size * i + i * gap, RED, size)
-    );
+  const cells = Array(width * height);
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      cells[j + width * i] = new SquareRenderer(
+        size * j + j * gap,
+        size * i + i * gap,
+        RED,
+        size
+      );
+    }
   }
+  return cells;
 }
