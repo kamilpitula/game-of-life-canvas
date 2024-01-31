@@ -5,8 +5,8 @@ import "./style.css";
 const RED = { r: 245, g: 222, b: 179, a: 80 };
 const GREEN = { r: 0, g: 255, b: 0, a: 40 };
 
-const size = 20;
-const gap = 5;
+const size = 8;
+const gap = 2;
 const height = 100;
 const width = 100;
 const flattenCells = generateBoard(height, width, size, gap);

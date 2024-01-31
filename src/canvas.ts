@@ -1,5 +1,5 @@
 const ZOOM_SENSITIVITY = 0.005;
-const ZOOM_MAX = 3;
+const ZOOM_MAX = 5;
 const ZOOM_MIN = 0.5;
 
 export type Scene = {
@@ -41,6 +41,9 @@ export class Canvas {
 
     this.canvasElement = el;
     this.context = context;
+    // this.context.imageSmoothingEnabled = false;
+    this.context.imageSmoothingQuality = "high";
+    // this.offScreenContext.imageSmoothingEnabled = false;
     this.scene = scene;
 
     this.initializeCanvas();
