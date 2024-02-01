@@ -9,10 +9,23 @@
   </head>
   <body>
     <div class="h-screen w-screen flex flex-col">
-      <header class="text-center py-4 bg-slate-300 shadow-lg">
-        <h1 class="text-3xl text-sky-800">Canvas Playground</h1>
+      <header class="text-center bg-slate-300 shadow-lg h-12">
+        <nav class="h-full flex gap-5 justify-center p-2">
+          <button
+            id="startBtn"
+            class="bg-slate-500 hover:bg-slate-400 px-2 rounded"
+          >
+            Start
+          </button>
+          <button
+            id="stopBtn"
+            class="bg-slate-500 hover:bg-slate-400 px-2 rounded"
+          >
+            Stop
+          </button>
+        </nav>
       </header>
-      <main class="h-[95%]">
+      <main class="flex-1">
         <canvas id="canvas" class="bg-slate-950 bg-opacity-85"></canvas>
       </main>
     </div>
