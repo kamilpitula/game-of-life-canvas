@@ -3,17 +3,17 @@ export type RGBA = { r: number; g: number; b: number; a: number };
 export abstract class ShapeRenderer {
   private transitionTime: number;
   private colorDiff: RGBA;
-  public dirty: boolean;
+  private _dirty: boolean;
 
   constructor(
-    public positionX: number,
-    public positionY: number,
+    protected positionX: number,
+    protected positionY: number,
     protected color: RGBA,
     private _containingArea: { x: number; y: number; w: number; h: number }
   ) {
     this.transitionTime = 0;
     this.colorDiff = { r: 0, g: 0, b: 0, a: 0 };
-    this.dirty = true;
+    this._dirty = true;
   }
   abstract in(x: number, y: number): boolean;
   abstract drawShapeOnImage(imageData: Uint8ClampedArray): void;
@@ -22,9 +22,13 @@ export abstract class ShapeRenderer {
     return this._containingArea;
   }
 
+  get dirty() {
+    return this._dirty;
+  }
+
   animateTransition() {
     if (this.transitionTime <= 0) {
-      this.dirty = false;
+      this._dirty = false;
       return;
     }
 
@@ -46,6 +50,6 @@ export abstract class ShapeRenderer {
     const bDiff = (targetB - b) / transitionTime;
     const aDiff = (targetA - a) / transitionTime;
     this.colorDiff = { r: rDiff, g: gDiff, b: bDiff, a: aDiff };
-    this.dirty = true;
+    this._dirty = true;
   }
 }
