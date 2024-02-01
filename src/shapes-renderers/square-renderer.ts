@@ -25,4 +25,14 @@ export class SquareRenderer extends ShapeRenderer {
       y < this.positionY + this.a
     );
   }
+
+  drawShapeOnImage(imageData: Uint8ClampedArray): void {
+    const { r, g, b, a } = this.color;
+    for (let i = 0; i < imageData.length; i += 4) {
+      imageData[i] = r;
+      imageData[i + 1] = g;
+      imageData[i + 2] = b;
+      imageData[i + 3] = a;
+    }
+  }
 }

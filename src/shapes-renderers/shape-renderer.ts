@@ -8,7 +8,7 @@ export abstract class ShapeRenderer {
   constructor(
     public positionX: number,
     public positionY: number,
-    public color: RGBA,
+    protected color: RGBA,
     private _containingArea: { x: number; y: number; w: number; h: number }
   ) {
     this.transitionTime = 0;
@@ -16,6 +16,7 @@ export abstract class ShapeRenderer {
     this.dirty = true;
   }
   abstract in(x: number, y: number): boolean;
+  abstract drawShapeOnImage(imageData: Uint8ClampedArray): void;
 
   get containingArea() {
     return this._containingArea;

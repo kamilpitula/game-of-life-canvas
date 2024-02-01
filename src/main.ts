@@ -46,15 +46,8 @@ const scene: Scene = {
       for (const shape of dirtyCells) {
         shape.animateTransition();
         const { x, y, w, h } = shape.containingArea;
-        const { r, g, b, a } = shape.color;
         const imageDataForCell = context.getImageData(x, y, w, h);
-        const data = imageDataForCell.data;
-        for (let i = 0; i < data.length; i += 4) {
-          imageDataForCell.data[i] = r;
-          imageDataForCell.data[i + 1] = g;
-          imageDataForCell.data[i + 2] = b;
-          imageDataForCell.data[i + 3] = a;
-        }
+        shape.drawShapeOnImage(imageDataForCell.data);
         context.putImageData(imageDataForCell, x, y);
       }
     }
