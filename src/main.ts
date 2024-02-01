@@ -1,4 +1,5 @@
 import { Canvas, Scene } from "./canvas";
+import { ShapeRenderer } from "./shapes-renderers/shape-renderer";
 import { SquareRenderer } from "./shapes-renderers/square-renderer";
 import "./style.css";
 
@@ -10,6 +11,7 @@ const gap = 2;
 const height = 100;
 const width = 100;
 const flattenCells = generateBoard(height, width, size, gap);
+let dirtyCells = [...flattenCells];
 
 const widthPx = width * size + (width - 1) * gap;
 const heightPx = height * size + (height - 1) * gap;
@@ -33,20 +35,22 @@ const scene: Scene = {
         target.isAlive = true;
         target.changeColorTo(COLOR_ALIVE, 10);
       }
+      dirtyCells.push(target);
     }
   },
 
   sceneRenderer(context) {
-    const dirtyCells = flattenCells.filter((c) => c.dirty);
-    if (dirtyCells.length === 0) return;
+    renderSquares();
 
-    setPixels();
-
-    function setPixels() {
-      for (const shape of dirtyCells) {
+    function renderSquares() {
+      const next: ShapeRenderer[] = [];
+      while (dirtyCells.length > 0) {
+        const shape = dirtyCells.pop();
         shape.animateTransition();
         shape.drawShape(context);
+        if (shape.dirty) next.push(shape);
       }
+      dirtyCells = next;
     }
   },
 };
