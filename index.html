@@ -8,8 +8,8 @@
     <script type="module" defer src="/src/main.ts"></script>
   </head>
   <body>
-    <div class="h-screen w-screen flex flex-col">
-      <header class="text-center bg-slate-300 shadow-lg h-12">
+    <div class="h-screen flex flex-col">
+      <header class="text-center bg-slate-300 shadow-lg min-h-12">
         <nav class="h-full flex gap-5 justify-center p-2">
           <button
             id="startBtn"
@@ -25,7 +25,7 @@
           </button>
         </nav>
       </header>
-      <main class="flex-1">
+      <main class="flex-grow overflow-hidden">
         <canvas id="canvas" class="bg-slate-950 bg-opacity-85"></canvas>
       </main>
     </div>
