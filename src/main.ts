@@ -2,8 +2,8 @@ import { Canvas, Scene } from "./canvas";
 import { SquareRenderer } from "./shapes-renderers/square-renderer";
 import "./style.css";
 
-const RED = { r: 245, g: 222, b: 179, a: 80 };
-const GREEN = { r: 0, g: 255, b: 0, a: 40 };
+const COLOR_DEAD = { r: 207, g: 184, b: 60, a: 50 };
+const COLOR_ALIVE = { r: 60, g: 143, b: 145, a: 79 };
 
 const size = 8;
 const gap = 2;
@@ -28,10 +28,10 @@ const scene: Scene = {
     if (target) {
       if (target.isAlive) {
         target.isAlive = false;
-        target.changeColorTo(RED, 10);
+        target.changeColorTo(COLOR_DEAD, 10);
       } else {
         target.isAlive = true;
-        target.changeColorTo(GREEN, 10);
+        target.changeColorTo(COLOR_ALIVE, 10);
       }
     }
   },
@@ -67,7 +67,7 @@ function generateBoard(
       cells[j + width * i] = new SquareRenderer(
         size * j + j * gap,
         size * i + i * gap,
-        RED,
+        COLOR_DEAD,
         size
       );
     }
