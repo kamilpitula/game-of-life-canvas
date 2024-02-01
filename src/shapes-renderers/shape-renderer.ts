@@ -16,7 +16,7 @@ export abstract class ShapeRenderer {
     this._dirty = true;
   }
   abstract in(x: number, y: number): boolean;
-  abstract drawShapeOnImage(imageData: Uint8ClampedArray): void;
+  abstract drawShape(imageData: CanvasRenderingContext2D): void;
 
   get containingArea() {
     return this._containingArea;

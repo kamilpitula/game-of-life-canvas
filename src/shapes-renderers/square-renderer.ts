@@ -26,13 +26,28 @@ export class SquareRenderer extends ShapeRenderer {
     );
   }
 
-  drawShapeOnImage(imageData: Uint8ClampedArray): void {
-    const { r, g, b, a } = this.color;
-    for (let i = 0; i < imageData.length; i += 4) {
-      imageData[i] = r;
-      imageData[i + 1] = g;
-      imageData[i + 2] = b;
-      imageData[i + 3] = a;
-    }
+  drawShape(context: CanvasRenderingContext2D): void {
+    context.save();
+    context.fillStyle = `rgba(${this.color.r}  ${this.color.g}  ${this.color.b} / ${this.color.a}%)`
+    context.fillRect(this.positionX, this.positionY, this.a, this.a);
+    context.restore();
+
+    //TODO: this requires a proper benchmarking in order to decide which one is faster
+
+    // const image = context.getImageData(
+    //   this.positionX,
+    //   this.positionY,
+    //   this.a,
+    //   this.a
+    // );
+    // const imageData = image.data;
+    // const { r, g, b, a } = this.color;
+    // for (let i = 0; i < imageData.length; i += 4) {
+    //   imageData[i] = r;
+    //   imageData[i + 1] = g;
+    //   imageData[i + 2] = b;
+    //   imageData[i + 3] = a;
+    // }
+    // context.putImageData(image, this.positionX, this.positionY);
   }
 }

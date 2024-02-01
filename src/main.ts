@@ -45,10 +45,7 @@ const scene: Scene = {
     function setPixels() {
       for (const shape of dirtyCells) {
         shape.animateTransition();
-        const { x, y, w, h } = shape.containingArea;
-        const imageDataForCell = context.getImageData(x, y, w, h);
-        shape.drawShapeOnImage(imageDataForCell.data);
-        context.putImageData(imageDataForCell, x, y);
+        shape.drawShape(context);
       }
     }
   },
