@@ -25,6 +25,10 @@ export class Game {
     this.onGameStateChanged = DO_NOTHING;
   }
 
+  get dimensions(): GameSettings {
+    return { width: this.width, height: this.height };
+  }
+
   tick() {
     let aliveCellsCounter = 0;
     const updates: (() => void)[] = [];
