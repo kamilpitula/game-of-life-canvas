@@ -1,4 +1,5 @@
 import { Canvas, Scene } from "./canvas";
+import { Game } from "./model/Game";
 import { ShapeRenderer } from "./shapes-renderers/shape-renderer";
 import { SquareRenderer } from "./shapes-renderers/square-renderer";
 import "./style.css";
@@ -10,6 +11,9 @@ const size = 8;
 const gap = 2;
 const height = 100;
 const width = 100;
+
+const game = new Game({ width, height });
+
 const flattenCells = generateBoard(height, width, size, gap);
 let dirtyCells = [...flattenCells];
 
@@ -20,23 +24,21 @@ const scene: Scene = {
   width: widthPx,
   height: heightPx,
   clickHandler(x, y) {
-    const xCell = Math.floor(x / (size + gap));
-    const yCell = Math.floor(y / (size + gap));
-    const target = flattenCells[xCell + width * yCell];
+    const cellColumn = Math.floor(x / (size + gap));
+    const cellRow = Math.floor(y / (size + gap));
+    const target = flattenCells[cellColumn + width * cellRow];
     if (!target) return;
 
     if (!target.in(x, y)) return;
 
-    if (target) {
-      if (target.isAlive) {
-        target.isAlive = false;
-        target.changeColorTo(COLOR_DEAD, 10);
-      } else {
-        target.isAlive = true;
-        target.changeColorTo(COLOR_ALIVE, 10);
-      }
-      dirtyCells.push(target);
+    if (game.getCellStateForPosition(cellColumn, cellRow)) {
+      game.changeCellState(cellColumn, cellRow);
+      target.changeColorTo(COLOR_DEAD, 10);
+    } else {
+      game.changeCellState(cellColumn, cellRow);
+      target.changeColorTo(COLOR_ALIVE, 10);
     }
+    dirtyCells.push(target);
   },
 
   sceneRenderer(context) {
@@ -59,7 +61,7 @@ const canvas = new Canvas("canvas", scene);
 
 runAnimation();
 
-function runAnimation(){
+function runAnimation() {
   canvas.animateScene();
   window.requestAnimationFrame(() => runAnimation());
 }
