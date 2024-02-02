@@ -3,8 +3,9 @@ import { Game } from "./model/Game";
 import { ShapeRenderer } from "./shapes-renderers/shape-renderer";
 import { SquareRenderer } from "./shapes-renderers/square-renderer";
 
-const COLOR_DEAD = { r: 207, g: 184, b: 60, a: 50 };
-const COLOR_ALIVE = { r: 60, g: 143, b: 145, a: 79 };
+const COLOR_FRESH = { r: 207, g: 188, b: 138, a: 100 };
+const COLOR_ALIVE = { r: 113, g: 126, b: 202, a: 60 };
+const COLOR_VISITED = { r: 197, g: 222, b: 136, a: 100 }
 
 let running = false;
 
@@ -23,7 +24,7 @@ export function createScene(game: Game, size: number, gap: number) {
   const heightPx = height * size + (height - 1) * gap;
 
   const flattenCells = generateBoard(height, width, size, gap);
-  let dirtyCells = [...flattenCells];
+  let dirtyCells = new Set<ShapeRenderer>(flattenCells);
 
   const scene: Scene = {
     width: widthPx,
@@ -45,13 +46,12 @@ export function createScene(game: Game, size: number, gap: number) {
 
       function renderSquares() {
         const next: ShapeRenderer[] = [];
-        while (dirtyCells.length > 0) {
-          const shape = dirtyCells.shift();
+        for (const shape of dirtyCells) {
           shape.animateTransition();
           shape.drawShape(context);
           if (shape.dirty) next.push(shape);
         }
-        dirtyCells = next;
+        dirtyCells = new Set<ShapeRenderer>(next);
       }
     },
   };
@@ -60,9 +60,9 @@ export function createScene(game: Game, size: number, gap: number) {
 
   function updateBoardView(column: number, row: number, state: boolean) {
     const target = flattenCells[column + width * row];
-    const newColor = state ? COLOR_ALIVE : COLOR_DEAD;
-    target.changeColorTo(newColor, 10);
-    dirtyCells.push(target);
+    const newColor = state ? COLOR_ALIVE : COLOR_VISITED;
+    target.changeColorTo(newColor, 1);
+    dirtyCells.add(target);
   }
 
   function generateBoard(
@@ -77,7 +77,7 @@ export function createScene(game: Game, size: number, gap: number) {
         cells[j + width * i] = new SquareRenderer(
           size * j + j * gap,
           size * i + i * gap,
-          COLOR_DEAD,
+          COLOR_FRESH,
           size
         );
       }

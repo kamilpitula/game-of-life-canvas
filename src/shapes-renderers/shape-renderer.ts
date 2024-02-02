@@ -31,10 +31,7 @@ export abstract class ShapeRenderer {
   }
 
   animateTransition() {
-    if (this.transitionTime <= 0) {
-      this._dirty = false;
-      return;
-    }
+    if(!this._dirty) return;
 
     this.color = {
       r: this.color.r + this.colorDiff.r,
@@ -43,6 +40,10 @@ export abstract class ShapeRenderer {
       a: this.color.a + this.colorDiff.a,
     };
     this.transitionTime--;
+
+    if (this.transitionTime <= 0) {
+      this._dirty = false;
+    }
   }
 
   changeColorTo(color: RGBA, transitionTime: number) {
