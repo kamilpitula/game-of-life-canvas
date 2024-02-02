@@ -46,7 +46,7 @@ export abstract class ShapeRenderer {
   }
 
   changeColorTo(color: RGBA, transitionTime: number) {
-    if (isColorEqual(this.color, color)) return;
+    if (isColorEqual(this.color, color) && !this._dirty) return;
     const { r: targetR, g: targetG, b: targetB, a: targetA } = color;
     const { r, g, b, a } = this.color;
     this.transitionTime = transitionTime;

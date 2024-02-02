@@ -46,7 +46,7 @@ export function createScene(game: Game, size: number, gap: number) {
       function renderSquares() {
         const next: ShapeRenderer[] = [];
         while (dirtyCells.length > 0) {
-          const shape = dirtyCells.pop();
+          const shape = dirtyCells.shift();
           shape.animateTransition();
           shape.drawShape(context);
           if (shape.dirty) next.push(shape);
