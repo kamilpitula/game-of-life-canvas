@@ -132,7 +132,5 @@ export class Canvas {
     );
     this.scene.sceneRenderer(this.offScreenContext);
     this.context.drawImage(this.offScreenCanvas, 0, 0);
-
-    window.requestAnimationFrame(() => this.animateScene());
   }
 }

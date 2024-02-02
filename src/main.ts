@@ -57,7 +57,12 @@ const scene: Scene = {
 
 const canvas = new Canvas("canvas", scene);
 
-canvas.animateScene();
+runAnimation();
+
+function runAnimation(){
+  canvas.animateScene();
+  window.requestAnimationFrame(() => runAnimation());
+}
 
 function generateBoard(
   height: number,
