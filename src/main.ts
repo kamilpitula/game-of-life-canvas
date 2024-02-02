@@ -20,6 +20,15 @@ let dirtyCells = [...flattenCells];
 const widthPx = width * size + (width - 1) * gap;
 const heightPx = height * size + (height - 1) * gap;
 
+function updateBoardView(column: number, row: number, state: boolean) {
+  const target = flattenCells[column + width * row];
+  const newColor = state ? COLOR_ALIVE : COLOR_DEAD;
+  target.changeColorTo(newColor, 10);
+  dirtyCells.push(target);
+}
+
+game.setGameStateChangedHandler(updateBoardView);
+
 const scene: Scene = {
   width: widthPx,
   height: heightPx,
@@ -31,10 +40,7 @@ const scene: Scene = {
 
     if (!target.in(x, y)) return;
 
-    const newState = game.changeCellState(cellColumn, cellRow);
-    const newColor = newState ? COLOR_ALIVE : COLOR_DEAD;
-    target.changeColorTo(newColor, 10);
-    dirtyCells.push(target);
+    game.changeCellState(cellColumn, cellRow);
   },
 
   sceneRenderer(context) {

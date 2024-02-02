@@ -1,10 +1,19 @@
 export type GameSettings = { width: number; height: number };
 
+type GameStateChangedHandler = (
+  column: number,
+  row: number,
+  toState: boolean
+) => void;
+
+const DO_NOTHING: GameStateChangedHandler = (_, __, ___) => {};
+
 export class Game {
   private width: number;
   private height: number;
   private board: boolean[];
   private generation: number;
+  private onGameStateChanged: GameStateChangedHandler;
 
   constructor(settings: GameSettings) {
     if (settings.height <= 0 || settings.width <= 0)
@@ -13,6 +22,7 @@ export class Game {
     this.height = settings.height;
     this.board = new Array(this.width * this.height).fill(false);
     this.generation = 0;
+    this.onGameStateChanged = DO_NOTHING;
   }
 
   tick() {
@@ -27,13 +37,7 @@ export class Game {
         const stateChanged = newState !== currentState;
         if (newState) aliveCellsCounter++;
         if (stateChanged) {
-          updates.push(
-            this.updateCellState.bind(
-              this,
-              newState,
-              this.getCellForPosition(column, row)
-            )
-          );
+          updates.push(this.updateCellState.bind(this, newState, column, row));
         }
       }
     }
@@ -45,16 +49,21 @@ export class Game {
   changeCellState(column: number, row: number) {
     const cell = this.getCellForPosition(column, row);
     this.board[cell] = !this.board[cell];
-    return this.board[cell];
+    this.onGameStateChanged(column, row, this.board[cell]);
+  }
+
+  setGameStateChangedHandler(handler: GameStateChangedHandler) {
+    this.onGameStateChanged = handler;
   }
 
   private getCellStateForPosition(column: number, row: number) {
     return this.board[this.getCellForPosition(column, row)];
   }
 
-  private updateCellState(newState: boolean, cell: number) {
+  private updateCellState(newState: boolean, column: number, row: number) {
+    const cell = this.getCellForPosition(column, row);
     this.board[cell] = newState;
-    // this.onCellStateChanged(cell);
+    this.onGameStateChanged(column, row, this.board[cell]);
   }
 
   private calculateNewState(
