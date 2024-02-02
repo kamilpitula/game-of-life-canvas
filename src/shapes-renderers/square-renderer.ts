@@ -1,8 +1,6 @@
 import { RGBA, ShapeRenderer as ShapeRenderer } from "./shape-renderer";
 
 export class SquareRenderer extends ShapeRenderer {
-  isAlive: boolean = false;
-
   constructor(
     positionX: number,
     positionY: number,
