@@ -1,5 +1,9 @@
 export type RGBA = { r: number; g: number; b: number; a: number };
 
+function isColorEqual(a: RGBA, b: RGBA) {
+  return a.r === b.r && a.g === b.g && a.b === b.b && a.a && b.a;
+}
+
 export abstract class ShapeRenderer {
   private transitionTime: number;
   private colorDiff: RGBA;
@@ -42,9 +46,10 @@ export abstract class ShapeRenderer {
   }
 
   changeColorTo(color: RGBA, transitionTime: number) {
-    this.transitionTime = transitionTime;
+    if (isColorEqual(this.color, color)) return;
     const { r: targetR, g: targetG, b: targetB, a: targetA } = color;
     const { r, g, b, a } = this.color;
+    this.transitionTime = transitionTime;
     const rDiff = (targetR - r) / transitionTime;
     const gDiff = (targetG - g) / transitionTime;
     const bDiff = (targetB - b) / transitionTime;
