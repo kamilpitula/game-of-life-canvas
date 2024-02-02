@@ -70,7 +70,7 @@ export class Game {
     currentState: boolean,
     aliveNeighboursCount: number
   ) {
-    if (currentState && aliveNeighboursCount === 3) {
+    if (!currentState && aliveNeighboursCount === 3) {
       return true;
     }
     if (
@@ -83,25 +83,25 @@ export class Game {
     return false;
   }
 
-  private countAliveNeighbours(positionX: number, positionY: number) {
+  private countAliveNeighbours(column: number, row: number) {
     let aliveNeighboursCount = 0;
 
     for (
-      let row = positionY - 1;
-      row <= positionY + 1 && row < this.height;
-      row++
+      let currentRow = row - 1;
+      currentRow <= row + 1 && currentRow < this.height;
+      currentRow++
     ) {
       for (
-        let column = positionX - 1;
-        column <= positionX + 1 && column < this.width;
-        column++
+        let currentColumn = column - 1;
+        currentColumn <= column + 1 && currentColumn < this.width;
+        currentColumn++
       ) {
-        if (row === positionY && column === positionX) continue;
-        if (row < 0 || column < 0) continue;
+        if (currentRow === row && currentColumn === column) continue;
+        if (currentRow < 0 || currentColumn < 0) continue;
 
         const isCurrentNeighbourAlive = this.getCellStateForPosition(
-          positionX,
-          positionY
+          currentColumn,
+          currentRow
         );
         if (isCurrentNeighbourAlive) {
           aliveNeighboursCount++;

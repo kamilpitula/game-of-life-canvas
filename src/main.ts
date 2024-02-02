@@ -4,6 +4,12 @@ import { ShapeRenderer } from "./shapes-renderers/shape-renderer";
 import { SquareRenderer } from "./shapes-renderers/square-renderer";
 import "./style.css";
 
+let running = false;
+const startBtn = <HTMLButtonElement>document.getElementById("startBtn");
+const stopBtn = <HTMLButtonElement>document.getElementById("stopBtn");
+startBtn.addEventListener("click", () => (running = true));
+stopBtn.addEventListener("click", () => (running = false));
+
 const COLOR_DEAD = { r: 207, g: 184, b: 60, a: 50 };
 const COLOR_ALIVE = { r: 60, g: 143, b: 145, a: 79 };
 
@@ -44,6 +50,7 @@ const scene: Scene = {
   },
 
   sceneRenderer(context) {
+    if (running) game.tick();
     renderSquares();
 
     function renderSquares() {
