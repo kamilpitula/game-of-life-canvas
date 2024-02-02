@@ -31,13 +31,9 @@ const scene: Scene = {
 
     if (!target.in(x, y)) return;
 
-    if (game.getCellStateForPosition(cellColumn, cellRow)) {
-      game.changeCellState(cellColumn, cellRow);
-      target.changeColorTo(COLOR_DEAD, 10);
-    } else {
-      game.changeCellState(cellColumn, cellRow);
-      target.changeColorTo(COLOR_ALIVE, 10);
-    }
+    const newState = game.changeCellState(cellColumn, cellRow);
+    const newColor = newState ? COLOR_ALIVE : COLOR_DEAD;
+    target.changeColorTo(newColor, 10);
     dirtyCells.push(target);
   },
 

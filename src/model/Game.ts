@@ -45,9 +45,10 @@ export class Game {
   changeCellState(column: number, row: number) {
     const cell = this.getCellForPosition(column, row);
     this.board[cell] = !this.board[cell];
+    return this.board[cell];
   }
 
-  getCellStateForPosition(column: number, row: number) {
+  private getCellStateForPosition(column: number, row: number) {
     return this.board[this.getCellForPosition(column, row)];
   }
 
